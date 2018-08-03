@@ -4,6 +4,8 @@
   "description": "Submit your source map and code location, get the location in the original code.",
   "main": "index.js",
   "scripts": {
+    "start": "node ./src/index.js",
+    "dev": "nodemon ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/timstruthoff/sourcemap-parse-api/issues"
   },
-  "homepage": "https://github.com/timstruthoff/sourcemap-parse-api#readme"
+  "homepage": "https://github.com/timstruthoff/sourcemap-parse-api#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
 }
