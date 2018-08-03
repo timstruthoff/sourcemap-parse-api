@@ -12,7 +12,6 @@ Run in development mode:
 Run in production mode:
 `npm run start`
 
-
 ## API Documentation
 
 ### POST /source-map
@@ -20,19 +19,23 @@ Run in production mode:
 Saves a new source-map on the server.
 
 #### Request
+
 The request must contain the following post body:
 
 ```javascript
 {
   "map": <String> The source map as a JSON string.
 }
-```
+
+
 #### Response
 
 ```javascript
+
 {
   "id": <String> The id of the source map on the server.
 }
+
 ```
 
 ### GET /source-map/:id
@@ -42,6 +45,7 @@ Accepts a location in the generated code and returns the location in the origina
 The request must contain the id in the URL and the following get parameters:
 
 #### Parameters
+
 | Name   | Type     | Description                              |
 |--------|----------|------------------------------------------|
 | line   | `integer` | The line number in the generated file.   |
@@ -51,10 +55,12 @@ The request must contain the id in the URL and the following get parameters:
 #### Response
 
 ```javascript
+
 {
   "line": <integer> The line number in the original file.
   "column": <integer> The column number in the original file.
 }
+
 ```
 
 ### DELETE /source-map/:id
