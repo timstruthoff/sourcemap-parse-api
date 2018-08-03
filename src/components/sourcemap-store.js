@@ -51,4 +51,30 @@ module.exports = class {
       return this.store[id].sourceMapObject;
     }
   }
+
+ /**
+  * Returns the original source, line, and column information 
+  * for the generated source's source map id, line and 
+  * column positions provided.
+  * @param {string} id The id of the source map.
+  * @param {number} line The line number in the generated source.
+  * @param {number} column The column number in the generated source.
+  */
+  originalPositionFor(id, line, column) {
+
+    // Checking if the source map exists in the store
+    if (typeof this.store[id] !== 'object') {
+      throw 'Source map not found!';
+    } else {
+      let sourceMapObject = this.store[id];
+
+      // Checking if the source map is already parsed.
+      if (sourceMapObject.status === 'ready') {
+        return sourceMapObject.originalPositionFor(line, column);
+      } else {
+        throw 'Source map not parsed yet'
+      }
+      
+    }
+  }
 };

@@ -20,14 +20,27 @@ sourceMapRouter.post('/', (req, res) => {
   });
 });
 
+// QUESTION: URL format with code location in path (e.g. /:id/:line/:column) 
+// or in GET parameter (e.g. /:id?line=1&column=2) ?
 sourceMapRouter.get('/:id', (req, res) => {
 
-  // TODO: Validate input
+  // TODO: Validate and sanitize input
+
   let id = req.params.id;
 
-  let object = store.getObject(id);
+  // Checking if both line and column number are provided in the request
+  let parametersPresent = (req.query.line !== undefined && req.query.column !== undefined);
+  
+  // Parsing the parameters
+  let line = parseInt(req.query.line);
+  let column = parseInt(req.query.column);
+  
+  if (parametersPresent) {
+    res.status(200).json(store.originalPositionFor(id, line, column));
+  } else {
+    res.status(404).json({error: 'No line and column provied!'});
+  }
 
-  res.status(200).json(object);
 });
 
 module.exports = sourceMapRouter;

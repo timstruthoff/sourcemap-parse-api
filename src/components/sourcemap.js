@@ -21,7 +21,10 @@ module.exports = class {
     this.parsePromise.then(consumer => {
       this.status = 'ready';
       this.consumer = consumer;
-    });
+    })
+    .catch(error => {
+      console.error(error);
+    }) ;
   }
 
   /**
@@ -29,22 +32,18 @@ module.exports = class {
    */
   parse() {
     if (typeof this.sourceMapObject !== 'object') {
-      throw 'No sourcemap found in sourcemap object!';
+      throw 'No source map found in sourcemap object!';
     } else {
       this.status = 'parsing';
 
       // Returning a promise which gets resolved when the parsing is complete
-      return new Promise((resolve, reject) => {
-        let resolveObject = {};
 
-        // TODO: Handle invalid sourcemap
-        // TODO: May not work because consumer will be destroyed (see doku)
-        sourceMap.SourceMapConsumer.with(this.sourceMapObject, null, consumer => {
-          resolveObject.originalPositionFor = consumer.originalPositionFor;
-
-          resolve(resolveObject);
-        });
-      });
+      // Asynchronously parsing the sourcemap and returnin a promise
+      // of when the parsing is finished
+      async function promise (sourceMapObject) {
+        return await new sourceMap.SourceMapConsumer(sourceMapObject);
+      }
+      return promise(this.sourceMapObject)
     }
   }
 
@@ -58,7 +57,10 @@ module.exports = class {
     if (this.status !== 'ready') {
       throw 'Parser not ready yet!';
     } else {
-      this.consumer.originalPositionFor(line, column);
+
+      // Getting the original position using the
+      // source-map module.
+      return this.consumer.originalPositionFor({line: line, column: column});
     }
   }
 };
