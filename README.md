@@ -40,9 +40,9 @@ The request must contain the following post body:
 
 ### GET /source-map/:id
 
-Accepts a location in the generated code and returns the location in the original code using the source map in the id.
+Returns the original source, line, and column information for the generated source's line and column positions provided.
 
-The request must contain the id in the URL and the following get parameters:
+The request must contain the id of the sourcemap in the URL and the following get parameters:
 
 #### Parameters
 
