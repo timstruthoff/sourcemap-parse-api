@@ -32,8 +32,8 @@
   "homepage": "https://github.com/timstruthoff/sourcemap-parse-api#readme",
   "dependencies": {
     "convert-source-map": "^1.5.1",
+    "crc-32": "^1.2.0",
     "express": "^4.16.3",
-    "shortid": "^2.2.12",
     "source-map": "^0.7.3"
   }
 }

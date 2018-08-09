@@ -1,4 +1,4 @@
-const shortid = require('shortid');
+const CRC32 = require('crc-32');
 const SourceMap = require('./sourcemap');
 
 module.exports = class {
@@ -13,7 +13,7 @@ module.exports = class {
    * @return {String} The id of the source map in the store.
    */
   add(sourceMapJSON) {
-    let id = shortid.generate();
+    let id = CRC32.str(sourceMapJSON).toString(32);
     this.store[id] = new SourceMap(sourceMapJSON);
     return id;
   }
