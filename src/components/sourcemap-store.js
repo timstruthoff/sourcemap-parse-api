@@ -1,9 +1,17 @@
 const CRC32 = require('crc-32');
 const SourceMap = require('./sourcemap');
+const config = require('./../config');
 
 module.exports = class {
   constructor() {
     this.store = {};
+    this.storeOrder = [];
+
+    // Checking for old source maps.
+    setInterval(() => {
+      this.deleteOldSourceMaps();
+      console.log(this.storeOrder);
+    }, config.SOURCE_MAP_DELETE_INTERVAL);
   }
 
   /**
@@ -13,9 +21,60 @@ module.exports = class {
    * @return {String} The id of the source map in the store.
    */
   add(sourceMapJSON) {
+    // Calculating checksum.
     let id = CRC32.str(sourceMapJSON).toString(32);
-    this.store[id] = new SourceMap(sourceMapJSON);
+
+    // Checking if the same source map was already parsed.
+    let existsIndex = this.storeOrder.indexOf(id);
+    if (existsIndex === -1) {
+      // Inserting source map into store and starting the parsing.
+      this.store[id] = new SourceMap(sourceMapJSON);
+    } else {
+      // Removing the elements id from the order array.
+      this.storeOrder.splice(existsIndex, 1);
+    }
+
+    // Inserting id of source map at the end of the order.
+    this.storeOrder.push(id);
+
+    // Deleting the oldest source map if the maximum number
+    // of source maps on the server is exceeded.
+    this.limitNumberOfSourceMaps();
+
     return id;
+  }
+
+  /**
+   * Deletes the oldest source map if the maximum number
+   * of source maps on the server is exceeded.
+   */
+  limitNumberOfSourceMaps() {
+    let numberOfSourceMaps = this.storeOrder.length;
+
+    if (numberOfSourceMaps >= config.MAX_NUMBER_OF_SOURCE_MAPS) {
+      // Removing the oldest source map.
+      let id = this.storeOrder[0];
+
+      this.delete(id);
+    }
+  }
+
+  /**
+   * Deletes all source maps which are older than a certain number.
+   */
+  deleteOldSourceMaps() {
+    // Calculating the timestamp from which on the source maps are deleted
+    let deleteThreshold = Date.now() - config.SOURCE_MAP_DELETE_TIMEOUT;
+
+    // Looping source maps
+    this.storeOrder.forEach(id => {
+      let sourceMapObject = this.store[id];
+
+      // Checking if the source map is older than that.
+      if (sourceMapObject.timestamp < deleteThreshold) {
+        this.delete(id);
+      }
+    });
   }
 
   /**
@@ -23,7 +82,11 @@ module.exports = class {
    * @param {String} id The id of a source map in the store.
    */
   delete(id) {
-    this.store[id] = undefined;
+    let index = this.storeOrder.indexOf(id);
+    if (index > -1) {
+      this.storeOrder.splice(index, 1);
+      this.store[id] = undefined;
+    }
   }
 
   /**
@@ -52,16 +115,15 @@ module.exports = class {
     }
   }
 
- /**
-  * Returns the original source, line, and column information 
-  * for the generated source's source map id, line and 
-  * column positions provided.
-  * @param {string} id The id of the source map.
-  * @param {number} line The line number in the generated source.
-  * @param {number} column The column number in the generated source.
-  */
+  /**
+   * Returns the original source, line, and column information
+   * for the generated source's source map id, line and
+   * column positions provided.
+   * @param {string} id The id of the source map.
+   * @param {number} line The line number in the generated source.
+   * @param {number} column The column number in the generated source.
+   */
   originalPositionFor(id, line, column) {
-
     // Checking if the source map exists in the store
     if (typeof this.store[id] !== 'object') {
       throw 'Source map not found!';
@@ -72,9 +134,8 @@ module.exports = class {
       if (sourceMapObject.status === 'ready') {
         return sourceMapObject.originalPositionFor(line, column);
       } else {
-        throw 'Source map not parsed yet'
+        throw 'Source map not parsed yet';
       }
-      
     }
   }
 };
