@@ -1,10 +1,14 @@
 const send = require('./send');
 const makeSourceMap = require('./makeSourceMap');
 
-const URL = 'http://127.0.0.1:3000/source-map';
+const URL = 'http://localhost:3000/source-map/';
 
-console.log(makeSourceMap());
-
-send(makeSourceMap(), URL).catch(error => {
-  console.error(error);
-});
+setInterval(() => {
+  send(makeSourceMap(), URL)
+    .then(result => {
+      console.log(result);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}, 5);
