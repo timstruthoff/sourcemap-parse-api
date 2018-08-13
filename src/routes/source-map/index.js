@@ -6,7 +6,7 @@ const SourceMapStore = require('./../../components/sourcemap-store');
 const store = new SourceMapStore();
 
 // Middleware for parsing the POST body into an object
-sourceMapRouter.use(express.json());
+sourceMapRouter.use(express.json({limit: '100mb'}));
 
 sourceMapRouter.post('/', (req, res) => {
   // TODO: validate that map is valid JSON
