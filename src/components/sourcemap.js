@@ -37,7 +37,12 @@ module.exports = class {
    */
   parse() {
     if (typeof this.sourceMapObject !== 'object') {
-      throw 'No source map found in sourcemap object!';
+      throw new ApiError({
+        message: 'No source map found in source map object!',
+        developerMessage: "This could be because the supplied wasn't parsed correctly.",
+        statusCode: 500,
+        code: 'E7746',
+      });
     } else {
       this.status = 'parsing';
 
@@ -60,7 +65,12 @@ module.exports = class {
    */
   originalPositionFor(line, column) {
     if (this.status !== 'ready') {
-      throw 'Parser not ready yet!';
+      throw new ApiError({
+        message: 'Parser not ready yet!',
+        developerMessage: 'Maybe try again in a few seconds.',
+        statusCode: 500,
+        code: 'E7746',
+      });
     } else {
       // Getting the original position using the
       // source-map module.

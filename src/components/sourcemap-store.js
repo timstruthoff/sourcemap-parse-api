@@ -1,6 +1,7 @@
 const CRC32 = require('crc-32');
 const SourceMap = require('./sourcemap');
 const config = require('./../config');
+const ApiError = require('./ApiError');
 
 module.exports = class {
   constructor() {
@@ -96,7 +97,13 @@ module.exports = class {
    */
   getJSON(id) {
     if (typeof this.store[id] !== 'object') {
-      throw 'Source map not found!';
+      test.test();
+      throw new ApiError({
+        message: 'Source map not found!',
+        developerMessage: "Maybe you didn't POST the sourcemap before or you used the wrong id.",
+        statusCode: 404,
+        code: 'E9406',
+      });
     } else {
       return this.store[id].sourceMapJSON;
     }
@@ -109,7 +116,12 @@ module.exports = class {
    */
   getObject(id) {
     if (typeof this.store[id] !== 'object') {
-      throw 'Source map not found!';
+      throw new ApiError({
+        message: 'Source map not found!',
+        developerMessage: "Maybe you didn't POST the sourcemap before or you used the wrong id.",
+        statusCode: 404,
+        code: 'E3301',
+      });
     } else {
       return this.store[id].sourceMapObject;
     }
@@ -126,7 +138,12 @@ module.exports = class {
   originalPositionFor(id, line, column) {
     // Checking if the source map exists in the store
     if (typeof this.store[id] !== 'object') {
-      throw 'Source map not found!';
+      throw new ApiError({
+        message: 'Source map not found!',
+        developerMessage: "Maybe you didn't POST the sourcemap before or you used the wrong id.",
+        statusCode: 404,
+        code: 'E3049',
+      });
     } else {
       let sourceMapObject = this.store[id];
 
@@ -134,7 +151,12 @@ module.exports = class {
       if (sourceMapObject.status === 'ready') {
         return sourceMapObject.originalPositionFor(line, column);
       } else {
-        throw 'Source map not parsed yet';
+        throw new ApiError({
+          message: 'Source map not parsed yet!',
+          developerMessage: "Maybe you didn't POST the sourcemap before or you used the wrong id.",
+          statusCode: 400,
+          code: 'E1282',
+        });
       }
     }
   }

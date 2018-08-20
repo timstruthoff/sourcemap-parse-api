@@ -6,7 +6,7 @@ const SourceMapStore = require('./../../components/sourcemap-store');
 const store = new SourceMapStore();
 
 // Middleware for parsing the POST body into an object
-sourceMapRouter.use(express.json({limit: '100mb'}));
+sourceMapRouter.use(express.json({ limit: '100mb' }));
 
 sourceMapRouter.post('/', (req, res) => {
   // TODO: validate that map is valid JSON
@@ -15,6 +15,7 @@ sourceMapRouter.post('/', (req, res) => {
   let id = store.add(sourceMapJSON);
 
   res.status(201).json({
+    status: 201,
     id,
   });
 });
@@ -22,7 +23,7 @@ sourceMapRouter.post('/', (req, res) => {
 /**
  * Endpoint for parsing an array of location.
  */
-sourceMapRouter.post('/:id', (req, res) => {
+sourceMapRouter.post('/:id', (req, res, next) => {
   // TODO: Validate and sanitize input
   let id = req.params.id;
   let locationsArray = req.body.errors;
@@ -50,7 +51,10 @@ sourceMapRouter.post('/:id', (req, res) => {
     // Returning all parsed locations
     res.status(200).json(returnArray);
   } else {
-    res.status(400).json({ error: 'There is no errors array!' });
+    let error = new Error('There is no errors array!');
+    error.statusCode = 400;
+    error.public = true;
+    next(error);
   }
 });
 
