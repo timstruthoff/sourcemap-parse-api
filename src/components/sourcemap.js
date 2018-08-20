@@ -1,6 +1,7 @@
 const convertSourceMap = require('convert-source-map');
 const shortid = require('shortid');
 const sourceMap = require('source-map');
+const ApiError = require('./ApiError');
 
 // TODO: Prevent dublicate stores
 module.exports = class {
@@ -11,7 +12,18 @@ module.exports = class {
     this.timestamp = Date.now();
 
     // Converting source map into JSON and object format
-    let convertObject = convertSourceMap.fromJSON(sourceMapJSON);
+    let convertObject;
+
+    // Trying to parse the provided JSON
+    try {
+      convertObject = convertSourceMap.fromJSON(sourceMapJSON);
+    } catch (parseError) {
+      throw new ApiError({
+        message: `Invalid source map: ${parseError.message}`,
+        statusCode: 400,
+        code: 'E9276',
+      });
+    }
     this.sourceMapObject = convertObject.toObject();
     this.sourceMapJSON = convertObject.toJSON();
 

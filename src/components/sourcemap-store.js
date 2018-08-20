@@ -97,7 +97,6 @@ module.exports = class {
    */
   getJSON(id) {
     if (typeof this.store[id] !== 'object') {
-      test.test();
       throw new ApiError({
         message: 'Source map not found!',
         developerMessage: "Maybe you didn't POST the sourcemap before or you used the wrong id.",
@@ -106,6 +105,24 @@ module.exports = class {
       });
     } else {
       return this.store[id].sourceMapJSON;
+    }
+  }
+
+  /**
+   * Gets a source map in json format
+   * @param {String} id The id of the sourcemap
+   * @return {Promise} The promise for when the source map is parsed.
+   */
+  getParsePromise(id) {
+    if (typeof this.store[id] !== 'object') {
+      throw new ApiError({
+        message: 'Source map not found!',
+        developerMessage: "Maybe you didn't POST the sourcemap before or you used the wrong id.",
+        statusCode: 404,
+        code: 'E6268',
+      });
+    } else {
+      return this.store[id].parsePromise;
     }
   }
 

@@ -1,0 +1,48 @@
+{
+  "definitions": {}, 
+  "$schema": "http://json-schema.org/draft-07/schema#", 
+  "$id": "http://example.com/root.json", 
+  "type": "object", 
+  "title": "Sourcemap parse request.", 
+  "required": [
+    "errors"
+  ], 
+  "properties": {
+    "errors": {
+      "$id": "#/properties/errors", 
+      "type": "array", 
+      "title": "The Errors Schema", 
+      "minItems": 0,
+      "maxItems": 100,
+      "items": {
+        "$id": "#/properties/errors/items", 
+        "type": "object", 
+        "title": "The error location items Schema", 
+        "required": [
+          "line", 
+          "column"
+        ], 
+        "properties": {
+          "line": {
+            "$id": "#/properties/errors/items/properties/line", 
+            "type": "integer", 
+            "title": "The line number Schema", 
+            "default": 0, 
+            "examples": [
+              1
+            ]
+          }, 
+          "column": {
+            "$id": "#/properties/errors/items/properties/column", 
+            "type": "integer", 
+            "title": "The column number Schema", 
+            "default": 0, 
+            "examples": [
+              1240
+            ]
+          }
+        }
+      }
+    }
+  }
+}
