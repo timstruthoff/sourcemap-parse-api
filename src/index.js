@@ -66,6 +66,23 @@ app.use(function(error, req, res, next) {
     }
 
     res.status(statusCode).json(responseObject);
+  } else if (typeof error === 'object' && error.expose === true) {
+    const responseObject = {};
+
+    // Destructuring error object into separate variables.
+    const { message, statusCode } = error;
+
+    // Validating each part of the error.
+    if (typeof message === 'string' && message.length > 0) {
+      responseObject.message = message;
+    }
+
+    if (typeof statusCode === 'number') {
+      responseObject.statusCode = statusCode;
+    }
+
+    responseObject.code = 'E2528';
+    res.status(statusCode).json(responseObject);
   } else {
     res.status(500).json({
       message: 'Unknown error!',
