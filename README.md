@@ -36,28 +36,36 @@ The request must contain the following post body:
 }
 ```
 
-### GET /source-map/:id
+### POST /source-map/:id
 
-Returns the original source, line, and column information for the generated source's line and column positions provided.
+Returns an array with the original source locations for all generated source locations in the request.
+Each location object contains the original source, line, and column.
 
-The request must contain the id of the sourcemap in the URL and the following get parameters:
+#### Request
 
-#### Parameters
+The request must contain the following post body:
 
-| Name   | Type     | Description                              |
-|--------|----------|------------------------------------------|
-| line   | `integer` | The line number in the generated file.   |
-| column | `integer` | The column number in the generated file. |
+```javascript
+{
+  "errors": [
+    {
+      "line": <integer> The line number in the generated file.
+      "column": <integer> The column number in the generated file.
+    }
+    ...
+  ]
+}
+```
 
 #### Response
 
 ```javascript
-{
-  "line": <integer> The line number in the original file.
-  "column": <integer> The column number in the original file.
-}
+[
+    {
+        "source": <String> The original source file of the location.
+        "line": <integer> The line number in the original file.
+        "column": <integer> The column number in the original file.
+    }
+    ...
+]
 ```
-
-### DELETE /source-map/:id
-
-Deletes the source-map with the id from the server.
